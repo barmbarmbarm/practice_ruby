@@ -1,0 +1,40 @@
+ # Ruby
+  - name: "Installing rubygems and etc"
+    ansible.builtin.yum:
+      name: "{{ item }}" # здесь мы будем перечислять пакеты для установки, поэтому вместо имени здесь плейсхолдер
+      state: "latest"
+      update_cache: true
+    with_items: # а вот тут уже и перечисляем, ansible сам их подcтавит вместо {{ name }}
+      - "rubygems"
+      - "@Development tools"
+      - "libxml2-devel"
+      - "libxslt-devel"
+      - "postgresql-devel"
+      - "ruby-devel"
+      - "gcc"
+      - "gcc-c++"
+      - "make"
+      - "python3-devel"
+      - "patch"
+      - "autoconf"
+      - "automake"
+      - "bison"
+      - "bzip2"
+      - "libffi-devel"
+      - "libtool"
+      - "patch"
+      - "readline-devel"
+      - "ruby"
+      - "sqlite-devel"
+      - "zlib-devel"
+      - "openssl-devel"
+      - "unzip"
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,32 @@
+# NGINX
+
+
+  - name: "Install nginx via yum" # имя, обязательно для любой таски из плейбука, должно содержать описание того что эта таска делает
+    ansible.builtin.yum: # имя модуля, этот модуль устанавливает софт на хосте с помощью пакета apt
+      name: "nginx" # имя пакета для установки
+      state: "latest" # установить последнюю версию пакета, в отличие от present, если пакет уже установлен в системе, попробует его обновить
+      update_cache: true # вызвать apt update перед установкой, чтобы убедиться в наличии самой свежей базы данных о пакетах
+
+  - name: "Copy nginx config"
+    ansible.builtin.copy:
+      src: files/nginx2.conf
+      dest: /etc/nginx/conf.d/nginx2.conf
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: Nginx restart
+    service:
+      name: nginx
+      state: restarted
+
+
+
+#  - name: "Copy our fastcgi-ruby.conf to /etc/nginx/snippets/"
+#    ansible.builtin.copy: # этот модуль копирует файлы/директории с контрольной ноды на хосты
+#      src: "files/fastcgi-ruby.conf" # путь к файлу/директории для копирования на контрольной ноде
+#      dest: "/etc/nginx/snippets/" # путь для вставки на удаленной машине, вставка папок ВСЕГДА будет осуществляться внутрь папки, ансибл никогда не будет подменять папки или переименовывать их
+#      owner: "vagrant" # пользователь владелец файла/директории на удаленной машине
+#      group: "vagrant" # группа владелец файла/директории на удаленной машине
+#      mode: "0644" # права доступа к файлу/директории
+#

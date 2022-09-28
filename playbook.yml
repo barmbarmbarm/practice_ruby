@@ -1,0 +1,23 @@
+#################
+# LEMP PLAYBOOK #
+#################
+---
+- hosts: "all" # применяем команды ко всем хостам из inventory
+  become: true # становимся привилегированным пользователем
+  roles:
+  - ruby
+  - nginx
+  - postgresql
+  - deploy
+
+  vars_prompt:
+    - name: "git_user"
+      private: no
+    - name: "git_pass"
+      private: yes
+
+  tasks:
+  - name: "Reload nginx"
+    ansible.builtin.service:
+      name: "nginx"
+      state: "reloaded"

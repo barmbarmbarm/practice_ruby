@@ -1,0 +1,41 @@
+[Unit]
+Description=ansible_practice
+After=syslog.target
+After=network.target
+#After=nginx.service
+#After=postgresql.service
+#User=root
+#WorkingDirectory=/home/vagrant/ansible/roles/deploy/files
+[Service]
+WorkingDirectory=/home/vagrant/ansible/roles/deploy/files
+User=root
+Environment="SECRET_KEY_BASE=asd"
+Environment="RAILS_ENV=production"
+Environment="RAILS_LOG_TO_STDOUT=1"
+Environment="DB_HOST=127.0.0.1"
+Environment="DB_PORT=5432"
+Environment="DB_NAME=DBDB"
+Environment="DB_USER=vagrant"
+Environment="DB_PASSWORD=123123"
+
+ExecStart=/bin/bash 'bundle exec rake db:migrate && bundle exec puma -b unix:/var/run/puma.sock -e $RAILS_ENV config.ru'
+ExecReload=/bin/kill -USR1 $MAINPID
+ExecStop=/bin/kill -TSTP $MAINPID
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+#    bundle exec rake db:migrate && \
+#    bundle exec puma -b unix:///var/run/puma.sock -e $RAILS_ENV config.ru
+
+
+
+#    WorkingDirectory — директория, из которой выполняется команда запуска программы
+#    LimitNOFILE — ограничение количества открытых файлов
+#    Install — это раздел, содержащий информацию для установки юнита. Его содержимое активируется/деактивируется при выполнении команд systemctl enable/disable (будут рассмотрены позже)
+#    WantedBy — текущий юнит может быть запущен после запуска указанных в данном параметре юнитов. В данном случае нода запускается после перехода системы в состояние, когда пользователь может взаимодействовать с командной строкой, т.е. после загрузки системы

@@ -1,0 +1,68 @@
+
+
+  - name: "Install git via yum"
+    ansible.builtin.yum: # имя модуля, этот модуль устанавливает софт на хосте с помощью пакета apt
+      name: "git" # имя пакета для установки
+      state: "latest" # установить последнюю версию пакета, в отличие от present, если пакет уже установлен в системе, попробует его обновить
+      update_cache: true # вызвать apt update перед установкой, чтобы убедиться в наличии самой свежей базы данных о пакетах
+
+  - name: "Create a directory /home/vagrant/ruby_practice"
+    ansible.builtin.file:
+      path: "/home/vagrant/ruby_practice/"
+      owner: "vagrant"
+      group: "vagrant"
+      state: directory
+      mode: '0644'
+
+#  vars_prompt:
+#    - name: "s045502"
+#      private: no
+#    - name: "33508763"
+#      private: yes
+
+  - git:
+      repo: "https://{{git_user|urlencode()}}:{{git_pass|urlencode()}}@gitlab.slurm.io/edu/xpaste_practicum"
+      dest: "/home/vagrant/ansible/xpaste_practicum"
+      update: yes
+      force: yes
+
+  - name: "Installing other"
+    ansible.builtin.shell: |
+        gpg2 --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB &&
+        command curl -sSL https://rvm.io/mpapis.asc | gpg2 --import - &&
+        command curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+        curl -sSL https://get.rvm.io | bash -s stable &&
+        source ~/.rvm/scripts/rvm &&
+        rvm install 2.4 &&
+        rvm use 2.4 --default
+        gem install nokogiri -v 1.8.2 &&
+        bundle install
+        sudo yum install http://repo.okay.com.mx/centos/7/x86_64/release/okay-release-1-1.noarch.rpm
+        sudo yum install v8-devel
+    args:
+      executable: /bin/bash
+      chdir: /home/vagrant/ansible/xpaste_practicum
+
+  - name: "Installing dependencies"
+    ansible.builtin.shell:
+      bundle config build.nokogiri --use-system-libraries
+      bundle install --clean --no-cache --without development
+    args:
+      executable: /bin/bash
+      chdir: /home/vagrant/ansible/xpaste_practicum
+
+
+
+
+
+  - name: Service systemd adding
+    template:
+      src: /home/vagrant/ansible/roles/deploy/files/ruby_practice.service
+      dest: /lib/systemd/system/ruby_practice.service
+
+#  sudo tee <<EOF >/dev/null /etc/systemd/system/massad.service/
+#  - sudo systemctl enable massad
+#  - sudo systemctl daemon-reload
+#  - udo systemctl daemon-reload and sudo systemctl restart etcd2.service
+#cd /etc/systemd/system/
+#cp ruby_practice.service
