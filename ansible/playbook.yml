@@ -3,7 +3,7 @@
   become: true
   hosts: xpaste
   vars:
-    postgres_users_no_log: false # включаем отображение паролей в консоле для отладки, само собой в продакшене это надо выключить
+    postgres_users_no_log: false # включаем отображение паролей в консоле для отладки
 
   pre_tasks:
   - name: Update ca-certificates
